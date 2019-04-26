@@ -1,0 +1,244 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "SyntaxError",
+     "evalue": "invalid syntax (<ipython-input-16-f29933e9f724>, line 32)",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;36m  File \u001b[0;32m\"<ipython-input-16-f29933e9f724>\"\u001b[0;36m, line \u001b[0;32m32\u001b[0m\n\u001b[0;31m    else:\u001b[0m\n\u001b[0m       ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m invalid syntax\n"
+     ]
+    }
+   ],
+   "source": [
+    "import spotipy\n",
+    "\n",
+    "username = \"lukes26\"\n",
+    "client_id = \"7b2e372e794045798ea224e5ea35b4c3\"\n",
+    "client_secret = \"2d9a192aff0f483e851d3bf7ddbab5c5\"\n",
+    "playlist_id = \"2YgpVC232zBUNYE224jggF\"\n",
+    "redirect_uri = \"https://localhost:8889\"\n",
+    "    \n",
+    "import sys\n",
+    "import spotipy\n",
+    "import yaml\n",
+    "import spotipy.util as util\n",
+    "from pprint import pprint\n",
+    "def load_config():\n",
+    "    global user_config\n",
+    "    stream = open('config.yaml')\n",
+    "    user_config = yaml.load(stream)\n",
+    "    pprint(user_config)\n",
+    "def get_top_songs_for_artist(artist, song_count=1):\n",
+    "    song_ids = []\n",
+    "    artist_results = sp.search(q='artist:' + artist, type='artist', limit=1)\n",
+    "    # pprint(artist_results)\n",
+    "if artist_results['artists']['total']:\n",
+    "        artist_id = artist_results['artists']['items'][0]['id']\n",
+    "        # pprint(artist_id)\n",
+    "        artist_top_tracks = sp.artist_top_tracks(artist_id)\n",
+    "        artist_top_tracks_length = len(artist_top_tracks['tracks'])\n",
+    "        for x in range(0, artist_top_tracks_length if song_count > artist_top_tracks_length else song_count ):\n",
+    "            song_ids.append(artist_top_tracks['tracks'][x]['id'])\n",
+    "            # pprint(artist_top_tracks['tracks'][x])\n",
+    "print(str(len(song_ids)) + ' songs found - ' + artist)\n",
+    "else:\n",
+    "    print('Artist not found - ' + artist)\n",
+    "# pprint(song_ids)\n",
+    "    return song_ids\n",
+    "def get_wacken_tracks():\n",
+    "    artists = [\n",
+    "        '2Cellos',\n",
+    "        'Acoustic Steel',\n",
+    "        'Act of Defiance',\n",
+    "        'Aephanemer',\n",
+    "        'Alestorm',\n",
+    "        'Xenoblight',\n",
+    "        'Zeal & Ardor'\n",
+    "    ]\n",
+    "all_track_ids = []\n",
+    "for i, current_artist in enumerate(artists):\n",
+    "        api_track_add_limit = 100\n",
+    "        top_song_limit_per_artist = 2\n",
+    "top_artist_songs = get_top_songs_for_artist(current_artist, top_song_limit_per_artist)\n",
+    "if len(top_artist_songs):\n",
+    "            all_track_ids.extend(top_artist_songs)\n",
+    "if len(all_track_ids)+ top_song_limit_per_artist > api_track_add_limit or (i == len(artists)-1 and len(all_track_ids)):\n",
+    "                sp.user_playlist_add_tracks(user=user_config['username'], playlist_id=user_config['playlist_id'], tracks=all_track_ids)\n",
+    "                all_track_ids = []\n",
+    "if __name__ == '__main__':\n",
+    "    global sp\n",
+    "    global user_config\n",
+    "    load_config()\n",
+    "token = util.prompt_for_user_token(user_config['username'], scope='playlist-modify-private,playlist-modify-public', client_id=user_config['client_id'], client_secret=user_config['client_secret'], redirect_uri=user_config['redirect_uri'])\n",
+    "if token:\n",
+    "        sp = spotipy.Spotify(auth=token)\n",
+    "        get_wacken_tracks()\n",
+    "else:\n",
+    "    print (\"Can't get token for\", user_config['username'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "https://api.spotify.com/v1/users/{lukes26}/playlists"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import spotipy\n",
+    "\n",
+    "birdy_uri = 'spotify:artist:2WX2uTcsvV5OnS0inACecP'\n",
+    "spotify = spotipy.Spotify()\n",
+    "\n",
+    "results = spotify.artist_albums(birdy_uri, album_type='album')\n",
+    "albums = results['items']\n",
+    "while results['next']:\n",
+    "    results = spotify.next(results)\n",
+    "    albums.extend(results['items'])\n",
+    "\n",
+    "for album in albums:\n",
+    "    print(album['name'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "AttributeError",
+     "evalue": "module 'spotipy' has no attribute 'help'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-10-842b31e04fbf>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mspotipy\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0mdir\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mspotipy\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 3\u001b[0;31m \u001b[0mspotipy\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mhelp\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'Spotify'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+      "\u001b[0;31mAttributeError\u001b[0m: module 'spotipy' has no attribute 'help'"
+     ]
+    }
+   ],
+   "source": [
+    "import spotipy\n",
+    "dir(spotipy)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def user_follows_at_least_one_artist(self):\n",
+    "        token = \n",
+    "        if self.token:\n",
+    "            print (\"Token exists!\")\n",
+    "            sp = spotipy.Spotify(auth=self.token)\n",
+    "            user_artist_follow_results = sp.current_user_followed_artists(limit=50)\n",
+    "            total_artists_user_follows = user_artist_follow_results['artists']['total']\n",
+    "            self.num_results_and_offset = {'sp': sp}\n",
+    "            self.sp = self.num_results_and_offset['sp']\n",
+    "            if total_artists_user_follows == 0:\n",
+    "                return False\n",
+    "            else:\n",
+    "                return True\n",
+    "        else:\n",
+    "            print(\"NO TOKEN\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "SpotifyException",
+     "evalue": "http status: 401, code:-1 - https://api.spotify.com/v1/artists/0Y5tJX1MQlPlqiwlOH1tJY/albums?album_type=album&limit=20&offset=0:\n No token provided",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mHTTPError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[0;32m/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/spotipy/client.py\u001b[0m in \u001b[0;36m_internal_call\u001b[0;34m(self, method, url, payload, params)\u001b[0m\n\u001b[1;32m    118\u001b[0m         \u001b[0;32mtry\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 119\u001b[0;31m             \u001b[0mr\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mraise_for_status\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    120\u001b[0m         \u001b[0;32mexcept\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/requests/models.py\u001b[0m in \u001b[0;36mraise_for_status\u001b[0;34m(self)\u001b[0m\n\u001b[1;32m    939\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mhttp_error_msg\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 940\u001b[0;31m             \u001b[0;32mraise\u001b[0m \u001b[0mHTTPError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mhttp_error_msg\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mresponse\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    941\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mHTTPError\u001b[0m: 401 Client Error: Unauthorized for url: https://api.spotify.com/v1/artists/0Y5tJX1MQlPlqiwlOH1tJY/albums?album_type=album&limit=20&offset=0",
+      "\nDuring handling of the above exception, another exception occurred:\n",
+      "\u001b[0;31mSpotifyException\u001b[0m                          Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-17-5bcefbf622fd>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      4\u001b[0m \u001b[0mspotify\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mspotipy\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mSpotify\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      5\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 6\u001b[0;31m \u001b[0mresults\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mspotify\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0martist_albums\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtravis_uri\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0malbum_type\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;34m'album'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      7\u001b[0m \u001b[0malbums\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mresults\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'items'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      8\u001b[0m \u001b[0;32mwhile\u001b[0m \u001b[0mresults\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'next'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/spotipy/client.py\u001b[0m in \u001b[0;36martist_albums\u001b[0;34m(self, artist_id, album_type, country, limit, offset)\u001b[0m\n\u001b[1;32m    268\u001b[0m         \u001b[0mtrid\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_get_id\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'artist'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0martist_id\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    269\u001b[0m         return self._get('artists/' + trid + '/albums', album_type=album_type,\n\u001b[0;32m--> 270\u001b[0;31m                          country=country, limit=limit, offset=offset)\n\u001b[0m\u001b[1;32m    271\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    272\u001b[0m     \u001b[0;32mdef\u001b[0m \u001b[0martist_top_tracks\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0martist_id\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mcountry\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;34m'US'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/spotipy/client.py\u001b[0m in \u001b[0;36m_get\u001b[0;34m(self, url, args, payload, **kwargs)\u001b[0m\n\u001b[1;32m    144\u001b[0m         \u001b[0;32mwhile\u001b[0m \u001b[0mretries\u001b[0m \u001b[0;34m>\u001b[0m \u001b[0;36m0\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    145\u001b[0m             \u001b[0;32mtry\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 146\u001b[0;31m                 \u001b[0;32mreturn\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_internal_call\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'GET'\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0murl\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mpayload\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    147\u001b[0m             \u001b[0;32mexcept\u001b[0m \u001b[0mSpotifyException\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0me\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    148\u001b[0m                 \u001b[0mretries\u001b[0m \u001b[0;34m-=\u001b[0m \u001b[0;36m1\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;32m/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/spotipy/client.py\u001b[0m in \u001b[0;36m_internal_call\u001b[0;34m(self, method, url, payload, params)\u001b[0m\n\u001b[1;32m    122\u001b[0m                 raise SpotifyException(r.status_code,\n\u001b[1;32m    123\u001b[0m                     \u001b[0;34m-\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m'%s:\\n %s'\u001b[0m \u001b[0;34m%\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mr\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0murl\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mr\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mjson\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'error'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'message'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 124\u001b[0;31m                     headers=r.headers)\n\u001b[0m\u001b[1;32m    125\u001b[0m             \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    126\u001b[0m                 raise SpotifyException(r.status_code,\n",
+      "\u001b[0;31mSpotifyException\u001b[0m: http status: 401, code:-1 - https://api.spotify.com/v1/artists/0Y5tJX1MQlPlqiwlOH1tJY/albums?album_type=album&limit=20&offset=0:\n No token provided"
+     ]
+    }
+   ],
+   "source": [
+    "import spotipy\n",
+    "\n",
+    "travis_uri = 'spotify:artist:0Y5tJX1MQlPlqiwlOH1tJY'\n",
+    "spotify = spotipy.Spotify()\n",
+    "\n",
+    "results = spotify.artist_albums(travis_uri, album_type='album')\n",
+    "albums = results['items']\n",
+    "while results['next']:\n",
+    "    results = spotify.next(results)\n",
+    "    albums.extend(results['items'])\n",
+    "\n",
+    "for album in albums:\n",
+    "    print(album['name'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
